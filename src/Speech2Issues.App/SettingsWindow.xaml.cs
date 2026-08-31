@@ -104,7 +104,7 @@ public partial class SettingsWindow : Window
             AiModelsCombo.ItemsSource = _models;
             AiModelsCombo.SelectedItem = _models.FirstOrDefault(x => string.Equals(x.Name, Settings.AiProvider.Model, StringComparison.OrdinalIgnoreCase));
             AiModelsCombo.Visibility = _models.Count == 0 ? Visibility.Collapsed : Visibility.Visible;
-            CheckStatusText.Text = _models.Count == 0 ? "Список моделей пуст; ID можно ввести вручную." : $"Найдено моделей: {_models.Count}.";
+            CheckStatusText.Text = _models.Count == 0 ? "Список моделей пуст; ID можно ввести вручную." : string.Empty;
         }
         catch (Exception ex)
         {
