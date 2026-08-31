@@ -1,0 +1,139 @@
+<Window x:Class="Speech2Issues.App.SettingsWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:shell="clr-namespace:System.Windows.Shell;assembly=PresentationFramework"
+        Title="Настройки Speech2Issues" Width="880" Height="700" MinWidth="760" MinHeight="600"
+        WindowStartupLocation="CenterOwner" WindowStyle="None" ResizeMode="CanResize"
+        Foreground="{DynamicResource TextBrush}" Background="{DynamicResource BgBrush}" PreviewKeyDown="Window_PreviewKeyDown">
+    <shell:WindowChrome.WindowChrome><shell:WindowChrome CaptionHeight="0" ResizeBorderThickness="6" GlassFrameThickness="0"/></shell:WindowChrome.WindowChrome>
+    <Grid>
+        <Grid.RowDefinitions><RowDefinition Height="58"/><RowDefinition Height="*"/><RowDefinition Height="72"/></Grid.RowDefinitions>
+        <Border MouseLeftButtonDown="TitleBar_MouseLeftButtonDown"><Grid Margin="22,0"><TextBlock Text="Настройки" FontSize="17" FontWeight="SemiBold" VerticalAlignment="Center"/><Button Style="{StaticResource IconButton}" Content="&#xE8BB;" HorizontalAlignment="Right" Click="CloseButton_Click"/></Grid></Border>
+        <Grid Grid.Row="1" Margin="22,4,22,0">
+            <Grid.ColumnDefinitions><ColumnDefinition Width="190"/><ColumnDefinition Width="18"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+            <ListBox x:Name="NavigationList" SelectionChanged="NavigationList_SelectionChanged" SelectedIndex="0" Background="Transparent" BorderThickness="0">
+                <ListBox.ItemContainerStyle>
+                    <Style TargetType="ListBoxItem">
+                        <Setter Property="Foreground" Value="{DynamicResource MutedBrush}"/>
+                        <Setter Property="Background" Value="Transparent"/>
+                        <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                        <Setter Property="Cursor" Value="Hand"/>
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="ListBoxItem">
+                                    <Border x:Name="ItemBorder" Background="{TemplateBinding Background}" CornerRadius="8" Padding="{TemplateBinding Padding}">
+                                        <ContentPresenter/>
+                                    </Border>
+                                    <ControlTemplate.Triggers>
+                                        <Trigger Property="IsMouseOver" Value="True">
+                                            <Setter TargetName="ItemBorder" Property="Background" Value="{DynamicResource Surface2Brush}"/>
+                                            <Setter Property="Foreground" Value="{DynamicResource TextBrush}"/>
+                                        </Trigger>
+                                        <Trigger Property="IsSelected" Value="True">
+                                            <Setter TargetName="ItemBorder" Property="Background" Value="{DynamicResource Surface3Brush}"/>
+                                            <Setter Property="Foreground" Value="{DynamicResource TextBrush}"/>
+                                            <Setter Property="FontWeight" Value="SemiBold"/>
+                                        </Trigger>
+                                    </ControlTemplate.Triggers>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </ListBox.ItemContainerStyle>
+                <ListBoxItem Content="Основные" Padding="14,12"/><ListBoxItem Content="Аудио и клавиша" Padding="14,12"/><ListBoxItem Content="ИИ" Padding="14,12"/><ListBoxItem Content="Подключения" Padding="14,12"/>
+            </ListBox>
+            <Grid Grid.Column="2">
+                <ScrollViewer x:Name="GeneralPanel" VerticalScrollBarVisibility="Auto">
+                    <StackPanel>
+                        <TextBlock Text="Основные" FontSize="22" FontWeight="SemiBold" Margin="0,0,0,18"/>
+                        <Border Style="{StaticResource Card}"><StackPanel><CheckBox x:Name="CloseToTrayCheck" Content="Закрывать окно в трей"/><CheckBox x:Name="StartMinimizedCheck" Content="Запускать свёрнутым с последним проектом" Margin="0,14,0,0"/></StackPanel></Border>
+                        <Border Style="{StaticResource Card}" Margin="0,12,0,0">
+                            <Grid>
+                                <Grid.ColumnDefinitions><ColumnDefinition Width="180"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                                <StackPanel VerticalAlignment="Center">
+                                    <TextBlock Text="Тема оформления"/>
+                                    <TextBlock Text="Меняет цвета и иконку" Foreground="{DynamicResource MutedBrush}" FontSize="11" Margin="0,4,0,0"/>
+                                </StackPanel>
+                                <ComboBox x:Name="ThemeCombo" Grid.Column="1" SelectedValuePath="Id" SelectionChanged="ThemeCombo_SelectionChanged">
+                                    <ComboBox.ItemTemplate>
+                                        <DataTemplate>
+                                            <StackPanel Orientation="Horizontal">
+                                                <Image Source="{Binding IconUri}" Width="30" Height="30" Stretch="Uniform" Margin="0,0,10,0"/>
+                                                <TextBlock Text="{Binding DisplayName}" VerticalAlignment="Center"/>
+                                            </StackPanel>
+                                        </DataTemplate>
+                                    </ComboBox.ItemTemplate>
+                                </ComboBox>
+                            </Grid>
+                        </Border>
+                        <Border Style="{StaticResource Card}" Margin="0,12,0,0"><Grid><Grid.ColumnDefinitions><ColumnDefinition Width="180"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions><Grid.RowDefinitions><RowDefinition/><RowDefinition/></Grid.RowDefinitions><TextBlock Text="Язык результата" VerticalAlignment="Center"/><TextBox x:Name="OutputLanguageBox" Grid.Column="1"/><TextBlock Grid.Row="1" Text="Автоотправка, секунд" VerticalAlignment="Center"/><TextBox x:Name="CountdownBox" Grid.Row="1" Grid.Column="1"/></Grid></Border>
+                    </StackPanel>
+                </ScrollViewer>
+
+                <ScrollViewer x:Name="AudioPanel" Visibility="Collapsed" VerticalScrollBarVisibility="Auto">
+                    <StackPanel>
+                        <TextBlock Text="Аудио и горячая клавиша" FontSize="22" FontWeight="SemiBold" Margin="0,0,0,18"/>
+                        <Border Style="{StaticResource Card}"><StackPanel><TextBlock Text="Микрофон" Foreground="{DynamicResource MutedBrush}" Margin="0,0,0,5"/><ComboBox x:Name="MicrophoneCombo" DisplayMemberPath="DisplayName"/><TextBlock Text="Звук компьютера" Foreground="{DynamicResource MutedBrush}" Margin="0,14,0,5"/><ComboBox x:Name="PlaybackCombo" DisplayMemberPath="DisplayName"/></StackPanel></Border>
+                        <Border Style="{StaticResource Card}" Margin="0,12,0,0"><StackPanel><TextBlock Text="Горячая клавиша" Foreground="{DynamicResource MutedBrush}" Margin="0,0,0,5"/><Grid><TextBox x:Name="HotKeyBox" IsReadOnly="True"/><Button x:Name="CaptureHotKeyButton" Style="{StaticResource AccentButton}" Content="Изменить" HorizontalAlignment="Right" Margin="8,0,0,0" Click="CaptureHotKey_Click"/></Grid></StackPanel></Border>
+                        <Border Style="{StaticResource Card}" Margin="0,12,0,0">
+                            <Grid>
+                                <Grid.ColumnDefinitions><ColumnDefinition Width="180"/><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions><RowDefinition/><RowDefinition/><RowDefinition/></Grid.RowDefinitions>
+                                <TextBlock Text="Модель Whisper" VerticalAlignment="Center"/>
+                                <ComboBox x:Name="WhisperModelCombo" Grid.Column="1"/>
+                                <TextBlock Grid.Row="1" Text="Язык (auto/ru/en)" VerticalAlignment="Center"/>
+                                <TextBox x:Name="WhisperLanguageBox" Grid.Row="1" Grid.Column="1"/>
+                                <StackPanel Grid.Row="2" VerticalAlignment="Center">
+                                    <TextBlock Text="Не выгружать модель"/>
+                                    <TextBlock Text="в минутах, 0 — сразу" Foreground="{DynamicResource MutedBrush}" FontSize="11" Margin="0,3,0,0"/>
+                                </StackPanel>
+                                <TextBox x:Name="WhisperUnloadDelayBox" Grid.Row="2" Grid.Column="1" ToolTip="Через сколько минут бездействия выгрузить Whisper из оперативной памяти"/>
+                                <Button Grid.Column="2" Grid.RowSpan="3" Content="Проверить" Margin="8,0,0,0" Click="TestWhisper_Click"/>
+                            </Grid>
+                        </Border>
+                    </StackPanel>
+                </ScrollViewer>
+
+                <ScrollViewer x:Name="AiPanel" Visibility="Collapsed" VerticalScrollBarVisibility="Auto">
+                    <StackPanel>
+                        <TextBlock Text="Искусственный интеллект" FontSize="22" FontWeight="SemiBold" Margin="0,0,0,6"/>
+                        <TextBlock Text="Whisper распознаёт речь, выбранный провайдер ИИ формирует задачи и выбирает категорию PLANKA." Foreground="{DynamicResource MutedBrush}" TextWrapping="Wrap" Margin="0,0,0,18"/>
+                        <Border Style="{StaticResource Card}">
+                            <StackPanel>
+                                <Grid>
+                                    <Grid.ColumnDefinitions><ColumnDefinition Width="150"/><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+                                    <Grid.RowDefinitions><RowDefinition/><RowDefinition/><RowDefinition/><RowDefinition/></Grid.RowDefinitions>
+                                    <TextBlock Text="Провайдер" VerticalAlignment="Center"/>
+                                    <ComboBox x:Name="AiProviderCombo" Grid.Column="1" Grid.ColumnSpan="2" DisplayMemberPath="DisplayName" SelectionChanged="AiProviderCombo_SelectionChanged"/>
+                                    <TextBlock Grid.Row="1" Text="Base URL" VerticalAlignment="Center"/>
+                                    <TextBox x:Name="AiUrlBox" Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2"/>
+                                    <TextBlock Grid.Row="2" Text="Bearer-токен" VerticalAlignment="Center"/>
+                                    <PasswordBox x:Name="AiTokenBox" Grid.Row="2" Grid.Column="1"/>
+                                    <Button Grid.Row="2" Grid.Column="2" Content="Удалить" Margin="8,0,0,0" Click="ClearAiToken_Click"/>
+                                    <TextBlock Grid.Row="3" Text="LLM-модель" VerticalAlignment="Center"/>
+                                    <TextBox x:Name="AiModelBox" Grid.Row="3" Grid.Column="1"/>
+                                    <Button Grid.Row="3" Grid.Column="2" Content="Обновить" Margin="8,0,0,0" Click="RefreshModels_Click"/>
+                                </Grid>
+                                <ComboBox x:Name="AiModelsCombo" Margin="150,8,0,0" DisplayMemberPath="DisplayName" Visibility="Collapsed" SelectionChanged="AiModelsCombo_SelectionChanged"/>
+                                <TextBlock x:Name="AiTokenStatusText" Margin="150,7,0,0" Foreground="{DynamicResource MutedBrush}" FontSize="11"/>
+                            </StackPanel>
+                        </Border>
+                        <Button Content="Проверить провайдера и выбранную модель" HorizontalAlignment="Left" Margin="0,12,0,0" Click="TestAi_Click"/>
+                    </StackPanel>
+                </ScrollViewer>
+
+                <ScrollViewer x:Name="ConnectionsPanel" Visibility="Collapsed" VerticalScrollBarVisibility="Auto">
+                    <StackPanel>
+                        <TextBlock Text="Подключения" FontSize="22" FontWeight="SemiBold" Margin="0,0,0,6"/>
+                        <TextBlock Text="Учётные данные общие. Конкретные проекты, репозитории и списки выбираются в настройках проекта." Foreground="{DynamicResource MutedBrush}" TextWrapping="Wrap" Margin="0,0,0,18"/>
+                        <GroupBox Header="PLANKA"><Grid><Grid.ColumnDefinitions><ColumnDefinition Width="150"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions><Grid.RowDefinitions><RowDefinition/><RowDefinition/></Grid.RowDefinitions><TextBlock Text="Base URL" VerticalAlignment="Center"/><TextBox x:Name="PlankaUrlBox" Grid.Column="1"/><TextBlock Grid.Row="1" Text="X-Api-Key" VerticalAlignment="Center"/><PasswordBox x:Name="PlankaKeyBox" Grid.Row="1" Grid.Column="1"/></Grid></GroupBox>
+                        <GroupBox Header="GitHub Issues" Margin="0,12,0,0"><Grid><Grid.ColumnDefinitions><ColumnDefinition Width="150"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions><Grid.RowDefinitions><RowDefinition/><RowDefinition/></Grid.RowDefinitions><TextBlock Text="Репозиторий" VerticalAlignment="Center"/><TextBox x:Name="GitHubRepoBox" Grid.Column="1" ToolTip="Резервное значение owner/repo"/><TextBlock Grid.Row="1" Text="PAT" VerticalAlignment="Center"/><PasswordBox x:Name="GitHubTokenBox" Grid.Row="1" Grid.Column="1"/></Grid></GroupBox>
+                        <GroupBox Header="Obsidian" Margin="0,12,0,0"><Grid><Grid.ColumnDefinitions><ColumnDefinition Width="150"/><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions><Grid.RowDefinitions><RowDefinition/><RowDefinition/></Grid.RowDefinitions><TextBlock Text="Vault" VerticalAlignment="Center"/><TextBox x:Name="VaultPathBox" Grid.Column="1"/><Button Grid.Column="2" Content="Обзор" Margin="8,0,0,0" Click="BrowseVault_Click"/><TextBlock Grid.Row="1" Text="Профиль" VerticalAlignment="Center"/><ComboBox x:Name="ObsidianProfileCombo" Grid.Row="1" Grid.Column="1"/></Grid></GroupBox>
+                        <GroupBox Header="Webhook" Margin="0,12,0,0"><Grid><Grid.ColumnDefinitions><ColumnDefinition Width="150"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions><Grid.RowDefinitions><RowDefinition/><RowDefinition/><RowDefinition/></Grid.RowDefinitions><TextBlock Text="URL" VerticalAlignment="Center"/><TextBox x:Name="WebhookUrlBox" Grid.Column="1"/><TextBlock Grid.Row="1" Text="Заголовки" VerticalAlignment="Top" Margin="0,9,0,0"/><TextBox x:Name="WebhookHeadersBox" Grid.Row="1" Grid.Column="1" AcceptsReturn="True" Height="58"/><TextBlock Grid.Row="2" Text="Секретные" VerticalAlignment="Top" Margin="0,9,0,0"/><TextBox x:Name="WebhookSecretHeadersBox" Grid.Row="2" Grid.Column="1" AcceptsReturn="True" Height="58"/></Grid></GroupBox>
+                    </StackPanel>
+                </ScrollViewer>
+            </Grid>
+        </Grid>
+        <Border Grid.Row="2" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="0,1,0,0" Padding="22,14"><DockPanel><TextBlock x:Name="CheckStatusText" VerticalAlignment="Center" Foreground="{DynamicResource MutedBrush}" TextTrimming="CharacterEllipsis" MaxWidth="500"/><StackPanel DockPanel.Dock="Right" Orientation="Horizontal"><Button Content="Отмена" IsCancel="True"/><Button Style="{StaticResource AccentButton}" Content="Сохранить" Margin="8,0,0,0" Click="Save_Click"/></StackPanel></DockPanel></Border>
+    </Grid>
+</Window>

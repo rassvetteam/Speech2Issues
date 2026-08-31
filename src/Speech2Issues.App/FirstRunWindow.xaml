@@ -1,0 +1,262 @@
+<Window x:Class="Speech2Issues.App.FirstRunWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:shell="clr-namespace:System.Windows.Shell;assembly=PresentationFramework"
+        Title="Первоначальная настройка Speech2Issues"
+        Width="920" Height="700" MinWidth="820" MinHeight="680"
+        WindowStartupLocation="CenterScreen" WindowStyle="None" ResizeMode="CanResize"
+        Foreground="{DynamicResource TextBrush}" Background="{DynamicResource BgBrush}"
+        Closing="Window_Closing">
+    <shell:WindowChrome.WindowChrome>
+        <shell:WindowChrome CaptionHeight="0" ResizeBorderThickness="7" GlassFrameThickness="0" CornerRadius="24"/>
+    </shell:WindowChrome.WindowChrome>
+
+    <Window.Resources>
+        <Style x:Key="ChoiceList" TargetType="ListBox">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Disabled"/>
+            <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Disabled"/>
+            <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+        </Style>
+        <Style x:Key="ChoiceItem" TargetType="ListBoxItem">
+            <Setter Property="Background" Value="{DynamicResource SurfaceBrush}"/>
+            <Setter Property="Foreground" Value="{DynamicResource TextBrush}"/>
+            <Setter Property="BorderBrush" Value="{DynamicResource BorderBrush}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Padding" Value="16"/>
+            <Setter Property="Margin" Value="0,0,0,12"/>
+            <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ListBoxItem">
+                        <Border x:Name="ChoiceBorder" Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="16" Padding="{TemplateBinding Padding}">
+                            <Grid>
+                                <ContentPresenter/>
+                                <Border x:Name="SelectedMark" Width="24" Height="24" CornerRadius="12"
+                                        HorizontalAlignment="Right" VerticalAlignment="Center"
+                                        Background="{DynamicResource AccentBrush}" Visibility="Collapsed">
+                                    <TextBlock Text="&#xE73E;" FontFamily="Segoe MDL2 Assets" Foreground="White"
+                                               FontSize="11" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                </Border>
+                            </Grid>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="ChoiceBorder" Property="Background" Value="{DynamicResource Surface2Brush}"/>
+                                <Setter TargetName="ChoiceBorder" Property="BorderBrush" Value="{DynamicResource BorderHoverBrush}"/>
+                            </Trigger>
+                            <Trigger Property="IsSelected" Value="True">
+                                <Setter TargetName="ChoiceBorder" Property="Background" Value="{DynamicResource Surface2Brush}"/>
+                                <Setter TargetName="ChoiceBorder" Property="BorderBrush" Value="{DynamicResource AccentBrush}"/>
+                                <Setter TargetName="ChoiceBorder" Property="BorderThickness" Value="2"/>
+                                <Setter TargetName="SelectedMark" Property="Visibility" Value="Visible"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style x:Key="ProviderChoiceItem" TargetType="ListBoxItem" BasedOn="{StaticResource ChoiceItem}">
+            <Setter Property="Margin" Value="6"/>
+            <Setter Property="Padding" Value="15"/>
+        </Style>
+        <Style x:Key="ModelChoiceItem" TargetType="ListBoxItem" BasedOn="{StaticResource ChoiceItem}">
+            <Setter Property="Margin" Value="0,0,0,6"/>
+            <Setter Property="Padding" Value="13,10"/>
+        </Style>
+        <Style x:Key="PageTitle" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="32"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="TextAlignment" Value="Center"/>
+            <Setter Property="HorizontalAlignment" Value="Center"/>
+        </Style>
+        <Style x:Key="PageSubtitle" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="Foreground" Value="{DynamicResource MutedBrush}"/>
+            <Setter Property="TextAlignment" Value="Center"/>
+            <Setter Property="TextWrapping" Value="Wrap"/>
+            <Setter Property="HorizontalAlignment" Value="Center"/>
+            <Setter Property="MaxWidth" Value="620"/>
+            <Setter Property="Margin" Value="0,10,0,28"/>
+        </Style>
+    </Window.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="74"/>
+            <RowDefinition Height="5"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="84"/>
+        </Grid.RowDefinitions>
+
+        <Border Grid.Row="0" MouseLeftButtonDown="TitleBar_MouseLeftButtonDown">
+            <Grid Margin="28,0">
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                    <Image Source="Assets/Speech2Issues-icon.png" Width="36" Height="36" Stretch="Uniform"/>
+                    <StackPanel Margin="12,0,0,0" VerticalAlignment="Center">
+                        <TextBlock Text="Speech2Issues" FontSize="15" FontWeight="SemiBold"/>
+                        <TextBlock x:Name="HeaderModeText" Text="Первоначальная настройка" Foreground="{DynamicResource MutedBrush}" FontSize="11"/>
+                    </StackPanel>
+                </StackPanel>
+                <TextBlock x:Name="StepLabel" Text="НАЧАЛО" HorizontalAlignment="Center" VerticalAlignment="Center"
+                           Foreground="{DynamicResource MutedBrush}" FontSize="11" FontWeight="SemiBold"/>
+                <Button x:Name="CloseButton" Style="{StaticResource IconButton}" Content="&#xE8BB;"
+                        HorizontalAlignment="Right" VerticalAlignment="Center" Click="CloseButton_Click"/>
+            </Grid>
+        </Border>
+
+        <Grid Grid.Row="1" Background="{DynamicResource Surface3Brush}">
+            <ProgressBar x:Name="SetupProgress" Height="5" VerticalAlignment="Stretch" Minimum="0" Maximum="6" Value="0"/>
+        </Grid>
+
+        <Grid x:Name="PageViewport" Grid.Row="2" Margin="52,24,52,12" ClipToBounds="True">
+            <Grid x:Name="WelcomePage">
+                <Grid.RenderTransform><TranslateTransform/></Grid.RenderTransform>
+                <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" MaxWidth="680">
+                    <Border Width="112" Height="112" CornerRadius="30" Background="{DynamicResource Surface2Brush}" Margin="0,0,0,24">
+                        <Image Source="Assets/Speech2Issues-icon.png" Width="78" Height="78" Stretch="Uniform"/>
+                    </Border>
+                    <TextBlock Style="{StaticResource PageTitle}" Text="Добро пожаловать"/>
+                    <TextBlock Style="{StaticResource PageSubtitle}" Text="Подготовим распознавание речи и подключим ИИ. Каждый шаг отвечает только за одну настройку — всё можно изменить позже."/>
+                    <UniformGrid Columns="3" Margin="0,8,0,0">
+                        <Border Style="{StaticResource Card}" Margin="0,0,8,0"><StackPanel><TextBlock Text="&#xE945;" FontFamily="Segoe MDL2 Assets" FontSize="22" Foreground="{DynamicResource AccentBrush}"/><TextBlock Text="Локальный Whisper" FontWeight="SemiBold" Margin="0,12,0,4"/><TextBlock Text="Аудио остаётся на компьютере" Foreground="{DynamicResource MutedBrush}" TextWrapping="Wrap" FontSize="12"/></StackPanel></Border>
+                        <Border Style="{StaticResource Card}" Margin="4,0"><StackPanel><TextBlock Text="&#xE950;" FontFamily="Segoe MDL2 Assets" FontSize="22" Foreground="{DynamicResource AccentBrush}"/><TextBlock Text="Любой ИИ" FontWeight="SemiBold" Margin="0,12,0,4"/><TextBlock Text="Ollama, LM Studio или API" Foreground="{DynamicResource MutedBrush}" TextWrapping="Wrap" FontSize="12"/></StackPanel></Border>
+                        <Border Style="{StaticResource Card}" Margin="8,0,0,0"><StackPanel><TextBlock Text="&#xE72E;" FontFamily="Segoe MDL2 Assets" FontSize="22" Foreground="{DynamicResource AccentBrush}"/><TextBlock Text="Один раз" FontWeight="SemiBold" Margin="0,12,0,4"/><TextBlock Text="Дальше приложение стартует сразу" Foreground="{DynamicResource MutedBrush}" TextWrapping="Wrap" FontSize="12"/></StackPanel></Border>
+                    </UniformGrid>
+                </StackPanel>
+            </Grid>
+
+            <Grid x:Name="RuntimePage" Visibility="Collapsed">
+                <Grid.RenderTransform><TranslateTransform/></Grid.RenderTransform>
+                <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Width="650">
+                    <TextBlock Text="&#xE950;" FontFamily="Segoe MDL2 Assets" FontSize="42" Foreground="{DynamicResource AccentBrush}" HorizontalAlignment="Center" Margin="0,0,0,18"/>
+                    <TextBlock Style="{StaticResource PageTitle}" Text="Как ускорять распознавание?"/>
+                    <TextBlock Style="{StaticResource PageSubtitle}" Text="Мы обнаружили оборудование компьютера и уже выбрали рекомендуемый вариант."/>
+                    <ListBox x:Name="RuntimeCombo" Style="{StaticResource ChoiceList}" ItemContainerStyle="{StaticResource ChoiceItem}">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <Grid Margin="0,0,38,0">
+                                    <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+                                    <StackPanel><TextBlock Text="{Binding DisplayName}" FontSize="16" FontWeight="SemiBold"/><TextBlock Text="{Binding Description}" Foreground="{DynamicResource MutedBrush}" Margin="0,5,20,0" TextWrapping="Wrap"/></StackPanel>
+                                    <Border Grid.Column="1" Background="{DynamicResource Surface3Brush}" CornerRadius="8" Padding="10,5" VerticalAlignment="Center"><TextBlock Text="{Binding SizeLabel}" Foreground="{DynamicResource MutedBrush}" FontSize="11"/></Border>
+                                </Grid>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                    <TextBlock x:Name="HardwareHintText" HorizontalAlignment="Center" Foreground="{DynamicResource MutedBrush}" FontSize="12" Margin="0,5,0,0"/>
+                </StackPanel>
+            </Grid>
+
+            <Grid x:Name="SpeechPage" Visibility="Collapsed">
+                <Grid.RenderTransform><TranslateTransform/></Grid.RenderTransform>
+                <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Width="680">
+                    <TextBlock Text="&#xE720;" FontFamily="Segoe MDL2 Assets" FontSize="42" Foreground="{DynamicResource AccentBrush}" HorizontalAlignment="Center" Margin="0,0,0,18"/>
+                    <TextBlock Style="{StaticResource PageTitle}" Text="Выберите качество распознавания"/>
+                    <TextBlock Style="{StaticResource PageSubtitle}" Text="Большая модель точнее распознаёт русскую речь, маленькая быстрее скачивается и требует меньше памяти."/>
+                    <ListBox x:Name="WhisperModelCombo" Height="322" Style="{StaticResource ChoiceList}" ItemContainerStyle="{StaticResource ModelChoiceItem}">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <Grid Margin="0,0,38,0">
+                                    <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+                                    <StackPanel><TextBlock Text="{Binding DisplayName}" FontSize="15" FontWeight="SemiBold"/><TextBlock Text="{Binding Description}" Foreground="{DynamicResource MutedBrush}" Margin="0,5,0,0"/></StackPanel>
+                                    <Border Grid.Column="1" Background="{DynamicResource Surface3Brush}" CornerRadius="8" Padding="10,5" VerticalAlignment="Center"><TextBlock Text="{Binding SizeLabel}" Foreground="{DynamicResource MutedBrush}" FontSize="11"/></Border>
+                                </Grid>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                </StackPanel>
+            </Grid>
+
+            <Grid x:Name="ProviderPage" Visibility="Collapsed">
+                <Grid.RenderTransform><TranslateTransform/></Grid.RenderTransform>
+                <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Width="740">
+                    <TextBlock Text="&#xE774;" FontFamily="Segoe MDL2 Assets" FontSize="42" Foreground="{DynamicResource AccentBrush}" HorizontalAlignment="Center" Margin="0,0,0,18"/>
+                    <TextBlock Style="{StaticResource PageTitle}" Text="Где будет работать ИИ?"/>
+                    <TextBlock Style="{StaticResource PageSubtitle}" Text="Выберите сервис, который превратит расшифрованную речь в готовые задачи."/>
+                    <ListBox x:Name="ProviderCombo" Style="{StaticResource ChoiceList}" ItemContainerStyle="{StaticResource ProviderChoiceItem}" SelectionChanged="ProviderCombo_SelectionChanged">
+                        <ListBox.ItemsPanel><ItemsPanelTemplate><UniformGrid Columns="3"/></ItemsPanelTemplate></ListBox.ItemsPanel>
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <StackPanel Margin="0,8,30,6" MinHeight="105">
+                                    <TextBlock Text="{Binding Glyph}" FontFamily="Segoe MDL2 Assets" FontSize="28" Foreground="{DynamicResource AccentBrush}"/>
+                                    <TextBlock Text="{Binding DisplayName}" FontSize="16" FontWeight="SemiBold" Margin="0,16,0,5"/>
+                                    <TextBlock Text="{Binding Description}" Foreground="{DynamicResource MutedBrush}" TextWrapping="Wrap" FontSize="12"/>
+                                </StackPanel>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                </StackPanel>
+            </Grid>
+
+            <Grid x:Name="ConnectionPage" Visibility="Collapsed">
+                <Grid.RenderTransform><TranslateTransform/></Grid.RenderTransform>
+                <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Width="660">
+                    <TextBlock Text="&#xE774;" FontFamily="Segoe MDL2 Assets" FontSize="42" Foreground="{DynamicResource AccentBrush}" HorizontalAlignment="Center" Margin="0,0,0,18"/>
+                    <TextBlock x:Name="ConnectionTitleText" Style="{StaticResource PageTitle}" Text="Подключите провайдера"/>
+                    <TextBlock Style="{StaticResource PageSubtitle}" Text="Проверка выполняется перед завершением. Токен хранится зашифрованным средствами Windows."/>
+                    <Border Style="{StaticResource Card}">
+                        <Grid>
+                            <Grid.ColumnDefinitions><ColumnDefinition Width="135"/><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions><RowDefinition/><RowDefinition/><RowDefinition/></Grid.RowDefinitions>
+                            <TextBlock Text="Base URL" VerticalAlignment="Center"/>
+                            <TextBox x:Name="ProviderUrlBox" Grid.Column="1" Grid.ColumnSpan="2"/>
+                            <TextBlock Grid.Row="1" Text="Bearer-токен" VerticalAlignment="Center"/>
+                            <PasswordBox x:Name="ProviderTokenBox" Grid.Row="1" Grid.Column="1"/>
+                            <Button x:Name="ClearTokenButton" Grid.Row="1" Grid.Column="2" Content="Удалить" Margin="8,0,0,0" Click="ClearToken_Click"/>
+                            <TextBlock Grid.Row="2" Text="Модель" VerticalAlignment="Center"/>
+                            <ComboBox x:Name="ProviderModelCombo" Grid.Row="2" Grid.Column="1" IsEditable="True" IsTextSearchEnabled="False" DisplayMemberPath="Name"/>
+                            <Button x:Name="RefreshModelsButton" Grid.Row="2" Grid.Column="2" Content="Обновить" Margin="8,0,0,0" Click="RefreshModels_Click"/>
+                        </Grid>
+                    </Border>
+                    <TextBlock x:Name="StoredTokenText" Margin="135,8,0,0" Foreground="{DynamicResource MutedBrush}" FontSize="11"/>
+                    <TextBlock x:Name="ProviderStatusText" Margin="0,12,0,0" Foreground="{DynamicResource MutedBrush}" TextAlignment="Center" TextWrapping="Wrap"/>
+                </StackPanel>
+            </Grid>
+
+            <Grid x:Name="InstallPage" Visibility="Collapsed">
+                <Grid.RenderTransform><TranslateTransform/></Grid.RenderTransform>
+                <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Width="620">
+                    <Grid Width="116" Height="116" Margin="0,0,0,28">
+                        <Ellipse Stroke="{DynamicResource Surface3Brush}" StrokeThickness="7"/>
+                        <Path Data="M 58,4 A 54,54 0 0 1 112,58" Stroke="{DynamicResource AccentBrush}" StrokeThickness="7" StrokeStartLineCap="Round" StrokeEndLineCap="Round">
+                            <Path.RenderTransform><RotateTransform x:Name="ProgressSpinnerRotate" CenterX="58" CenterY="58"/></Path.RenderTransform>
+                        </Path>
+                        <TextBlock Text="&#xE896;" FontFamily="Segoe MDL2 Assets" FontSize="31" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </Grid>
+                    <TextBlock x:Name="InstallTitleText" Style="{StaticResource PageTitle}" Text="Подготавливаем Speech2Issues"/>
+                    <TextBlock Style="{StaticResource PageSubtitle}" Text="Не закрывайте приложение. Скорость зависит от выбранной модели и подключения к интернету."/>
+                    <ProgressBar x:Name="InstallProgress" Width="520" Height="8" Minimum="0" Maximum="100" Value="0"/>
+                    <TextBlock x:Name="StatusText" Text="Начинаю установку…" Margin="0,16,0,0" Foreground="{DynamicResource MutedBrush}" TextAlignment="Center" TextWrapping="Wrap" MaxWidth="560"/>
+                </StackPanel>
+            </Grid>
+
+            <Grid x:Name="SuccessPage" Visibility="Collapsed">
+                <Grid.RenderTransform><TranslateTransform/></Grid.RenderTransform>
+                <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Width="650">
+                    <Border Width="118" Height="118" CornerRadius="59" Background="#183A31" Margin="0,0,0,28">
+                        <TextBlock Text="&#xE73E;" FontFamily="Segoe MDL2 Assets" FontSize="46" Foreground="{DynamicResource SuccessBrush}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </Border>
+                    <TextBlock Style="{StaticResource PageTitle}" Text="Всё готово"/>
+                    <TextBlock x:Name="SuccessSummaryText" Style="{StaticResource PageSubtitle}" Text="Компоненты установлены, а провайдер ИИ успешно проверен."/>
+                    <Border Style="{StaticResource Card}" HorizontalAlignment="Center" Padding="24,16">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="&#xE930;" FontFamily="Segoe MDL2 Assets" Foreground="{DynamicResource SuccessBrush}" VerticalAlignment="Center"/>
+                            <TextBlock x:Name="SuccessDetailsText" Text="Whisper и ИИ готовы к работе" Margin="10,0,0,0" VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </Border>
+                </StackPanel>
+            </Grid>
+        </Grid>
+
+        <Border Grid.Row="3" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="0,1,0,0">
+            <Grid Margin="28,0">
+                <Button x:Name="BackButton" Content="Назад" HorizontalAlignment="Left" VerticalAlignment="Center" Click="BackButton_Click"/>
+                <Button x:Name="NextButton" Style="{StaticResource AccentButton}" Content="Начать" HorizontalAlignment="Right" VerticalAlignment="Center" MinWidth="142" Click="NextButton_Click"/>
+            </Grid>
+        </Border>
+    </Grid>
+</Window>

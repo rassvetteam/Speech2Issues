@@ -1,0 +1,36 @@
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Speech2Issues.Core", "src\Speech2Issues.Core\Speech2Issues.Core.csproj", "{8C8689FD-2A70-4398-AD8B-1C03A6CB9A54}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Speech2Issues.App", "src\Speech2Issues.App\Speech2Issues.App.csproj", "{A6C49F56-11C4-424D-94F6-C0309CF7A929}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Speech2Issues.Tests", "tests\Speech2Issues.Tests\Speech2Issues.Tests.csproj", "{BBAAEDE2-136C-45C8-97E8-02F88BC85C31}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Speech2Issues.AudioSmoke", "tools\Speech2Issues.AudioSmoke\Speech2Issues.AudioSmoke.csproj", "{D665733C-5C43-4A83-86A3-B598E72BFFB1}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{8C8689FD-2A70-4398-AD8B-1C03A6CB9A54}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8C8689FD-2A70-4398-AD8B-1C03A6CB9A54}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8C8689FD-2A70-4398-AD8B-1C03A6CB9A54}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8C8689FD-2A70-4398-AD8B-1C03A6CB9A54}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A6C49F56-11C4-424D-94F6-C0309CF7A929}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A6C49F56-11C4-424D-94F6-C0309CF7A929}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A6C49F56-11C4-424D-94F6-C0309CF7A929}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A6C49F56-11C4-424D-94F6-C0309CF7A929}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BBAAEDE2-136C-45C8-97E8-02F88BC85C31}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BBAAEDE2-136C-45C8-97E8-02F88BC85C31}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BBAAEDE2-136C-45C8-97E8-02F88BC85C31}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BBAAEDE2-136C-45C8-97E8-02F88BC85C31}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D665733C-5C43-4A83-86A3-B598E72BFFB1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D665733C-5C43-4A83-86A3-B598E72BFFB1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D665733C-5C43-4A83-86A3-B598E72BFFB1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D665733C-5C43-4A83-86A3-B598E72BFFB1}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal

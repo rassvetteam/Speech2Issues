@@ -1,0 +1,123 @@
+<Window x:Class="Speech2Issues.App.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:shell="clr-namespace:System.Windows.Shell;assembly=PresentationFramework"
+        Title="Speech2Issues" Height="670" Width="940" MinHeight="580" MinWidth="780"
+        WindowStartupLocation="CenterScreen" WindowStyle="None" ResizeMode="CanResize"
+        Foreground="{DynamicResource TextBrush}" FontFamily="Segoe UI" Background="{DynamicResource BgBrush}">
+    <shell:WindowChrome.WindowChrome><shell:WindowChrome CaptionHeight="0" ResizeBorderThickness="6" GlassFrameThickness="0" UseAeroCaptionButtons="False"/></shell:WindowChrome.WindowChrome>
+    <Grid>
+        <Grid.RowDefinitions><RowDefinition Height="62"/><RowDefinition Height="*"/></Grid.RowDefinitions>
+        <Border Background="Transparent" MouseLeftButtonDown="TitleBar_MouseLeftButtonDown">
+            <Grid Margin="24,0">
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                    <Image x:Name="BrandIcon" Width="30" Height="30" Stretch="Uniform"/>
+                    <TextBlock Text="Speech2Issues" FontSize="15" FontWeight="SemiBold" Margin="11,0,0,0" VerticalAlignment="Center"/>
+                    <Ellipse x:Name="StatusDot" Width="7" Height="7" Fill="{DynamicResource SuccessBrush}" Margin="12,0,0,0"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
+                    <Button Style="{StaticResource IconButton}" Content="&#xE81C;" ToolTip="История" Click="HistoryButton_Click"/>
+                    <Button x:Name="SettingsButton" Style="{StaticResource IconButton}" Content="&#xE713;" ToolTip="Настройки" Click="SettingsButton_Click"/>
+                    <Button Style="{StaticResource IconButton}" Content="&#xE921;" ToolTip="Свернуть" Click="MinimizeButton_Click"/>
+                    <Button Style="{StaticResource IconButton}" Content="&#xE8BB;" ToolTip="Закрыть в трей" Click="CloseButton_Click"/>
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <Grid Grid.Row="1">
+            <Grid x:Name="ProjectHub" Margin="54,20,54,38">
+                <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="*"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
+                <Grid>
+                    <StackPanel>
+                        <TextBlock Text="Над чем работаем?" FontSize="30" FontWeight="SemiBold"/>
+                        <TextBlock Text="Выберите проект — назначения и маршрутизация применятся автоматически." Foreground="{DynamicResource MutedBrush}" FontSize="14" Margin="0,8,0,0"/>
+                    </StackPanel>
+                    <Button Style="{StaticResource AccentButton}" Content="＋  Новый проект" HorizontalAlignment="Right" VerticalAlignment="Center" Click="NewProject_Click"/>
+                </Grid>
+                <Grid Grid.Row="1" Margin="0,24,0,14">
+                    <TextBox x:Name="ProjectSearchBox" Padding="14,10" TextChanged="ProjectSearchBox_TextChanged" ToolTip="Поиск проекта"/>
+                    <TextBlock Text="Поиск" Foreground="{DynamicResource MutedBrush}" FontSize="13" Margin="16,0,0,0" VerticalAlignment="Center" IsHitTestVisible="False">
+                        <TextBlock.Style>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="Visibility" Value="Collapsed"/>
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding Text, ElementName=ProjectSearchBox}" Value="">
+                                        <Setter Property="Visibility" Value="Visible"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </TextBlock.Style>
+                    </TextBlock>
+                </Grid>
+                <ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Auto">
+                    <StackPanel>
+                        <ItemsControl x:Name="ProjectItems">
+                            <ItemsControl.ItemsPanel><ItemsPanelTemplate><WrapPanel/></ItemsPanelTemplate></ItemsControl.ItemsPanel>
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Button Width="250" Margin="0,0,12,12" Padding="0" Tag="{Binding Project}" Click="ProjectCard_Click" HorizontalContentAlignment="Stretch">
+                                        <Grid Margin="16,13">
+                                            <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
+                                            <Border Background="{DynamicResource AccentBrush}" CornerRadius="4" Padding="6,2" HorizontalAlignment="Left" VerticalAlignment="Top" Visibility="{Binding LastUsedVisibility}" Margin="0,0,0,8">
+                                                <TextBlock Text="Последний" Foreground="White" FontSize="10"/>
+                                            </Border>
+                                            <TextBlock Grid.Row="1" Text="{Binding Project.Name}" FontSize="16" FontWeight="SemiBold" TextTrimming="CharacterEllipsis"/>
+                                            <Grid Grid.Row="2" Margin="0,6,0,0">
+                                                <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+                                                <TextBlock Text="{Binding DestinationSummary}" Foreground="{DynamicResource MutedBrush}" VerticalAlignment="Center" TextTrimming="CharacterEllipsis"/>
+                                                <TextBlock Grid.Column="1" Text="Открыть  →" Foreground="{DynamicResource MutedBrush}" FontSize="12" VerticalAlignment="Center" Margin="8,0,0,0"/>
+                                            </Grid>
+                                        </Grid>
+                                    </Button>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                        <TextBlock x:Name="EmptyProjectsText" Text="Проектов пока нет. Создайте первый или импортируйте из подключённой платформы." Foreground="{DynamicResource MutedBrush}" FontSize="14" TextWrapping="Wrap" Margin="4,12" Visibility="Collapsed"/>
+                        <StackPanel x:Name="ImportSection" Visibility="Collapsed" Margin="0,16,0,0">
+                            <TextBlock Text="Найдены во внешних сервисах" FontSize="14" FontWeight="SemiBold" Margin="2,0,0,10"/>
+                            <ItemsControl x:Name="ImportItems">
+                                <ItemsControl.ItemTemplate><DataTemplate><Button Tag="{Binding}" Click="ImportProject_Click" Margin="0,0,8,8" Content="{Binding DisplayName}"/></DataTemplate></ItemsControl.ItemTemplate>
+                                <ItemsControl.ItemsPanel><ItemsPanelTemplate><WrapPanel/></ItemsPanelTemplate></ItemsControl.ItemsPanel>
+                            </ItemsControl>
+                        </StackPanel>
+                    </StackPanel>
+                </ScrollViewer>
+                <Border x:Name="ConnectionsPrompt" Grid.Row="3" Style="{StaticResource Card}" Padding="16" Margin="0,18,0,0">
+                    <Grid><Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+                        <StackPanel><TextBlock Text="Подключите рабочие платформы" FontWeight="SemiBold"/><TextBlock x:Name="ConnectionsText" Foreground="{DynamicResource MutedBrush}" Margin="0,5,0,0"/></StackPanel>
+                        <Button Grid.Column="1" Content="Настроить" Click="SettingsButton_Click"/>
+                    </Grid>
+                </Border>
+            </Grid>
+
+            <Grid x:Name="WorkspacePanel" Visibility="Collapsed" Margin="54,16,54,44">
+                <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="*"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
+                <Grid>
+                    <StackPanel>
+                        <Button Content="←  Сменить проект" HorizontalAlignment="Left" Padding="0" Background="Transparent" BorderThickness="0" Foreground="{DynamicResource MutedBrush}" Click="ChangeProject_Click"/>
+                        <TextBlock x:Name="ActiveProjectName" FontSize="28" FontWeight="SemiBold" Margin="0,12,0,0"/>
+                        <ItemsControl x:Name="DestinationBadges" Margin="0,10,0,0"><ItemsControl.ItemsPanel><ItemsPanelTemplate><StackPanel Orientation="Horizontal"/></ItemsPanelTemplate></ItemsControl.ItemsPanel><ItemsControl.ItemTemplate><DataTemplate><Border Background="{DynamicResource Surface2Brush}" CornerRadius="10" Padding="10,5" Margin="0,0,7,0"><TextBlock Text="{Binding}" FontSize="12"/></Border></DataTemplate></ItemsControl.ItemTemplate></ItemsControl>
+                    </StackPanel>
+                    <Button HorizontalAlignment="Right" VerticalAlignment="Top" Click="ConfigureProject_Click">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="&#xE70F;" FontFamily="Segoe MDL2 Assets" FontSize="13" VerticalAlignment="Center"/>
+                            <TextBlock Text="Проект" Margin="8,0,0,0" VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </Button>
+                </Grid>
+                <StackPanel Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center" Width="460">
+                    <Button x:Name="RecordButton" Style="{StaticResource RecordButtonStyle}" HorizontalAlignment="Center" Click="RecordButton_Click"/>
+                    <TextBlock x:Name="StatusText" Text="Готово к записи" HorizontalAlignment="Center" TextAlignment="Center" TextWrapping="Wrap" FontSize="15" Margin="0,20,0,0"/>
+                    <ProgressBar x:Name="ProcessingProgress" IsIndeterminate="True" Visibility="Collapsed" Width="320" Margin="0,14,0,0"/>
+                    <Border x:Name="ModelWarning" Background="#30241A" BorderBrush="#59401F" BorderThickness="1" CornerRadius="10" Padding="12" Margin="0,16,0,0" Visibility="Collapsed"><TextBlock x:Name="ModelWarningText" Foreground="#F0BE72" TextWrapping="Wrap" TextAlignment="Center"/></Border>
+                </StackPanel>
+                <Border Grid.Row="2" Background="{DynamicResource SurfaceBrush}" CornerRadius="14" Padding="18">
+                    <Grid><Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+                        <StackPanel><TextBlock x:Name="HotkeyText" FontWeight="SemiBold"/><TextBlock Text="Запись продолжит работать из любого приложения." Foreground="{DynamicResource MutedBrush}" FontSize="12" Margin="0,5,0,0"/></StackPanel>
+                        <Button Grid.Column="1" Content="Свернуть и продолжить" Click="HideToTray_Click"/>
+                    </Grid>
+                </Border>
+            </Grid>
+        </Grid>
+    </Grid>
+</Window>

@@ -1,0 +1,180 @@
+<Window x:Class="Speech2Issues.App.RecordingOverlayWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Width="500" SizeToContent="Height"
+        WindowStyle="None" ResizeMode="NoResize"
+        AllowsTransparency="True" Background="Transparent"
+        ShowInTaskbar="False" ShowActivated="False" Topmost="True"
+        Focusable="False" FontFamily="Segoe UI">
+    <Window.Resources>
+        <CubicEase x:Key="SmoothEase" EasingMode="EaseOut" />
+
+        <Style x:Key="OverlayButton" TargetType="Button">
+            <Setter Property="Height" Value="34" />
+            <Setter Property="Padding" Value="14,0" />
+            <Setter Property="Margin" Value="6,0,0,0" />
+            <Setter Property="Foreground" Value="#E8ECF2" />
+            <Setter Property="Background" Value="#252B37" />
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="FontSize" Value="12" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+            <Setter Property="Cursor" Value="Hand" />
+            <Setter Property="Focusable" Value="False" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="ButtonBorder" Background="{TemplateBinding Background}" CornerRadius="8">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="ButtonBorder" Property="Opacity" Value="0.82" />
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="ButtonBorder" Property="Opacity" Value="0.64" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="PrimaryOverlayButton" TargetType="Button" BasedOn="{StaticResource OverlayButton}">
+            <Setter Property="Background" Value="#6366F1" />
+            <Setter Property="Foreground" Value="White" />
+        </Style>
+
+        <Style x:Key="DangerOverlayButton" TargetType="Button" BasedOn="{StaticResource OverlayButton}">
+            <Setter Property="Background" Value="#392126" />
+            <Setter Property="Foreground" Value="#FF989B" />
+        </Style>
+
+        <Storyboard x:Key="RecordingPulse" RepeatBehavior="Forever">
+            <DoubleAnimation Storyboard.TargetName="PulseRing" Storyboard.TargetProperty="Opacity"
+                             From="0.65" To="0" Duration="0:0:1.35" />
+            <DoubleAnimation Storyboard.TargetName="PulseScale" Storyboard.TargetProperty="ScaleX"
+                             From="0.75" To="1.45" Duration="0:0:1.35" />
+            <DoubleAnimation Storyboard.TargetName="PulseScale" Storyboard.TargetProperty="ScaleY"
+                             From="0.75" To="1.45" Duration="0:0:1.35" />
+        </Storyboard>
+
+        <Storyboard x:Key="ProcessingSpin" RepeatBehavior="Forever">
+            <DoubleAnimation Storyboard.TargetName="SpinnerRotate" Storyboard.TargetProperty="Angle"
+                             From="0" To="360" Duration="0:0:1.1" />
+        </Storyboard>
+    </Window.Resources>
+
+    <Grid x:Name="RootCard" Margin="18" Opacity="0" RenderTransformOrigin="0.5,0">
+        <Grid.RenderTransform>
+            <TranslateTransform x:Name="RootTranslate" Y="-28" />
+        </Grid.RenderTransform>
+
+        <Border Background="#F5161A22" BorderBrush="#3A4354" BorderThickness="1"
+                CornerRadius="18" Padding="18">
+            <Border.Effect>
+                <DropShadowEffect BlurRadius="26" ShadowDepth="8" Opacity="0.46" Color="#07090D" />
+            </Border.Effect>
+
+            <Grid x:Name="ContentHost">
+                <Grid x:Name="RecordingPanel">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="58" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+
+                    <Grid Width="46" Height="46" VerticalAlignment="Center">
+                        <Ellipse x:Name="PulseRing" Fill="#E5484D" Opacity="0.5">
+                            <Ellipse.RenderTransform>
+                                <ScaleTransform x:Name="PulseScale" ScaleX="0.75" ScaleY="0.75" />
+                            </Ellipse.RenderTransform>
+                        </Ellipse>
+                        <Ellipse Width="32" Height="32" Fill="#2D1D23" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        <Ellipse Width="12" Height="12" Fill="#FF5D62" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    </Grid>
+
+                    <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                        <TextBlock Text="Записываю разговор" Foreground="#F4F6FA" FontSize="15" FontWeight="SemiBold" />
+                        <TextBlock Text="Микрофон и звук компьютера" Foreground="#929CAC" FontSize="12" Margin="0,4,0,0" />
+                    </StackPanel>
+
+                    <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center">
+                        <StackPanel Orientation="Horizontal" Height="32" VerticalAlignment="Center">
+                            <Border Width="4" Height="28" CornerRadius="2" Background="#777AF4" Margin="2,0" RenderTransformOrigin="0.5,1"><Border.RenderTransform><ScaleTransform x:Name="BarScale0" ScaleY="0.22" /></Border.RenderTransform></Border>
+                            <Border Width="4" Height="28" CornerRadius="2" Background="#8588F7" Margin="2,0" RenderTransformOrigin="0.5,1"><Border.RenderTransform><ScaleTransform x:Name="BarScale1" ScaleY="0.34" /></Border.RenderTransform></Border>
+                            <Border Width="4" Height="28" CornerRadius="2" Background="#9699FA" Margin="2,0" RenderTransformOrigin="0.5,1"><Border.RenderTransform><ScaleTransform x:Name="BarScale2" ScaleY="0.52" /></Border.RenderTransform></Border>
+                            <Border Width="4" Height="28" CornerRadius="2" Background="#A7A9FC" Margin="2,0" RenderTransformOrigin="0.5,1"><Border.RenderTransform><ScaleTransform x:Name="BarScale3" ScaleY="0.72" /></Border.RenderTransform></Border>
+                            <Border Width="4" Height="28" CornerRadius="2" Background="#9699FA" Margin="2,0" RenderTransformOrigin="0.5,1"><Border.RenderTransform><ScaleTransform x:Name="BarScale4" ScaleY="0.5" /></Border.RenderTransform></Border>
+                            <Border Width="4" Height="28" CornerRadius="2" Background="#8588F7" Margin="2,0" RenderTransformOrigin="0.5,1"><Border.RenderTransform><ScaleTransform x:Name="BarScale5" ScaleY="0.32" /></Border.RenderTransform></Border>
+                            <Border Width="4" Height="28" CornerRadius="2" Background="#777AF4" Margin="2,0" RenderTransformOrigin="0.5,1"><Border.RenderTransform><ScaleTransform x:Name="BarScale6" ScaleY="0.2" /></Border.RenderTransform></Border>
+                        </StackPanel>
+                        <TextBlock x:Name="RecordingDurationText" Text="00:00" Foreground="#B9C1CD" FontSize="12" FontWeight="SemiBold" Margin="12,0,0,0" VerticalAlignment="Center" />
+                    </StackPanel>
+                </Grid>
+
+                <Grid x:Name="ProcessingPanel" Visibility="Collapsed">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="58" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <Grid Width="42" Height="42" VerticalAlignment="Center">
+                        <Ellipse Stroke="#343B49" StrokeThickness="3" />
+                        <Path Data="M 21 2 A 19 19 0 0 1 40 21" Stroke="#777AF4" StrokeThickness="3" StrokeStartLineCap="Round" StrokeEndLineCap="Round">
+                            <Path.RenderTransform>
+                                <RotateTransform x:Name="SpinnerRotate" CenterX="21" CenterY="21" />
+                            </Path.RenderTransform>
+                        </Path>
+                    </Grid>
+                    <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                        <TextBlock Text="Создаю задачу" Foreground="#F4F6FA" FontSize="15" FontWeight="SemiBold" />
+                        <TextBlock x:Name="ProcessingText" Text="Обрабатываю запись…" Foreground="#929CAC" FontSize="12" Margin="0,5,0,0" TextTrimming="CharacterEllipsis" />
+                    </StackPanel>
+                </Grid>
+
+                <StackPanel x:Name="DraftPanel" Visibility="Collapsed">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <StackPanel>
+                            <StackPanel Orientation="Horizontal">
+                                <Border Background="#21382F" CornerRadius="6" Padding="8,3">
+                                    <TextBlock Text="ISSUE ГОТОВ" Foreground="#69D8AE" FontSize="10" FontWeight="Bold" />
+                                </Border>
+                                <TextBlock x:Name="DraftDestinationText" Foreground="#7F8999" FontSize="11" Margin="10,0,0,0" VerticalAlignment="Center" TextWrapping="Wrap" MaxWidth="280" />
+                            </StackPanel>
+                            <TextBlock x:Name="DraftTitleText" Foreground="#F4F6FA" FontSize="16" FontWeight="SemiBold" Margin="0,10,0,0" TextWrapping="Wrap" />
+                            <TextBlock x:Name="DraftDescriptionText" Foreground="#9AA4B3" FontSize="12" Margin="0,5,0,0" TextWrapping="Wrap" MaxHeight="38" />
+                        </StackPanel>
+                        <TextBlock Grid.Column="1" Text="&#xE73E;" FontFamily="Segoe MDL2 Assets" Foreground="#69D8AE" FontSize="22" Margin="14,2,2,0" />
+                    </Grid>
+
+                    <Grid Margin="0,15,0,0">
+                        <TextBlock x:Name="CountdownText" Foreground="#8E98A8" FontSize="11" VerticalAlignment="Center" />
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                            <Button Style="{StaticResource DangerOverlayButton}" Content="Отозвать" Click="CancelButton_Click" />
+                            <Button Style="{StaticResource OverlayButton}" Content="Изменить" Click="EditButton_Click" />
+                            <Button Style="{StaticResource PrimaryOverlayButton}" Content="Отправить" Click="SendButton_Click" />
+                        </StackPanel>
+                    </Grid>
+                    <ProgressBar x:Name="CountdownProgress" Height="3" Minimum="0" Maximum="5" Value="5" Margin="0,13,0,-4" Background="#272D38" Foreground="#777AF4" BorderThickness="0" />
+                </StackPanel>
+
+                <Grid x:Name="ResultPanel" Visibility="Collapsed">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="48" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <Border x:Name="ResultIconBorder" Width="38" Height="38" CornerRadius="19" Background="#21382F">
+                        <TextBlock x:Name="ResultIconText" Text="&#xE73E;" FontFamily="Segoe MDL2 Assets" Foreground="#69D8AE" FontSize="17" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    </Border>
+                    <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                        <TextBlock x:Name="ResultTitleText" Text="Задача отправлена" Foreground="#F4F6FA" FontSize="15" FontWeight="SemiBold" />
+                        <TextBlock x:Name="ResultMessageText" Foreground="#929CAC" FontSize="12" Margin="0,4,0,0" TextWrapping="Wrap" />
+                    </StackPanel>
+                </Grid>
+            </Grid>
+        </Border>
+    </Grid>
+</Window>

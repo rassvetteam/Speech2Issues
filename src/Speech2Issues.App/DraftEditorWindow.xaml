@@ -1,0 +1,25 @@
+<Window x:Class="Speech2Issues.App.DraftEditorWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:shell="clr-namespace:System.Windows.Shell;assembly=PresentationFramework"
+        Title="Редактирование задачи" Width="760" Height="700" MinWidth="640" MinHeight="560"
+        WindowStartupLocation="CenterOwner" WindowStyle="None" ResizeMode="CanResize"
+        Background="{DynamicResource BgBrush}" Foreground="{DynamicResource TextBrush}">
+    <shell:WindowChrome.WindowChrome><shell:WindowChrome CaptionHeight="0" ResizeBorderThickness="6" GlassFrameThickness="0"/></shell:WindowChrome.WindowChrome>
+    <Grid>
+        <Grid.RowDefinitions><RowDefinition Height="56"/><RowDefinition Height="*"/><RowDefinition Height="72"/></Grid.RowDefinitions>
+        <Border MouseLeftButtonDown="TitleBar_MouseLeftButtonDown"><Grid Margin="22,0"><TextBlock Text="Проверка задачи" FontSize="16" FontWeight="SemiBold" VerticalAlignment="Center"/><Button Style="{StaticResource IconButton}" Content="&#xE8BB;" HorizontalAlignment="Right" Click="Cancel_Click"/></Grid></Border>
+        <Grid Grid.Row="1" Margin="22,4,22,16">
+            <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="*"/><RowDefinition Height="Auto"/><RowDefinition Height="*"/></Grid.RowDefinitions>
+            <TextBlock Text="Заголовок" Foreground="{DynamicResource MutedBrush}" Margin="0,0,0,6"/>
+            <TextBox x:Name="TitleBox" Grid.Row="1" FontSize="16"/>
+            <TextBox x:Name="DescriptionBox" Grid.Row="2" AcceptsReturn="True" TextWrapping="Wrap" VerticalScrollBarVisibility="Auto" Margin="0,12,0,0"/>
+            <StackPanel x:Name="PlankaRoutePanel" Grid.Row="3" Margin="0,12,0,0">
+                <TextBlock Text="Список PLANKA" Foreground="{DynamicResource MutedBrush}" Margin="0,0,0,6"/>
+                <ComboBox x:Name="PlankaTargetCombo" DisplayMemberPath="DisplayName"/>
+            </StackPanel>
+            <GroupBox Grid.Row="4" Header="Расшифровка" Margin="0,12,0,0"><TextBox x:Name="TranscriptBox" IsReadOnly="True" AcceptsReturn="True" TextWrapping="Wrap" VerticalScrollBarVisibility="Auto" BorderThickness="0" Background="Transparent"/></GroupBox>
+        </Grid>
+        <Border Grid.Row="2" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="0,1,0,0" Padding="22,14"><StackPanel Orientation="Horizontal" HorizontalAlignment="Right"><Button Content="Отозвать" Click="Cancel_Click"/><Button Style="{StaticResource AccentButton}" Content="Сохранить и отправить" Margin="8,0,0,0" Click="Save_Click"/></StackPanel></Border>
+    </Grid>
+</Window>

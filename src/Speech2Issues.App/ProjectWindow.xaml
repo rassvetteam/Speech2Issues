@@ -1,0 +1,97 @@
+<Window x:Class="Speech2Issues.App.ProjectWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:shell="clr-namespace:System.Windows.Shell;assembly=PresentationFramework"
+        Title="Проект" Width="720" Height="760" MinWidth="640" MinHeight="620"
+        WindowStartupLocation="CenterOwner" WindowStyle="None" ResizeMode="CanResize"
+        Background="{DynamicResource BgBrush}" Foreground="{DynamicResource TextBrush}">
+    <shell:WindowChrome.WindowChrome>
+        <shell:WindowChrome CaptionHeight="0" ResizeBorderThickness="6" GlassFrameThickness="0" />
+    </shell:WindowChrome.WindowChrome>
+    <Grid>
+        <Grid.RowDefinitions><RowDefinition Height="56"/><RowDefinition Height="*"/><RowDefinition Height="72"/></Grid.RowDefinitions>
+        <Border MouseLeftButtonDown="TitleBar_MouseLeftButtonDown">
+            <Grid Margin="22,0"><TextBlock Text="Настройка проекта" FontSize="16" FontWeight="SemiBold" VerticalAlignment="Center"/><Button Style="{StaticResource IconButton}" Content="&#xE8BB;" HorizontalAlignment="Right" Click="Close_Click"/></Grid>
+        </Border>
+        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+            <StackPanel Margin="22,4,22,18">
+                <TextBlock Text="Название" Foreground="{DynamicResource MutedBrush}" Margin="0,0,0,6"/>
+                <TextBox x:Name="NameBox" FontSize="17" Padding="12,10"/>
+
+                <TextBlock Text="Куда отправлять задачи" FontSize="15" FontWeight="SemiBold" Margin="0,24,0,4"/>
+                <TextBlock Text="Можно включить несколько платформ. Задача будет создана во всех отмеченных назначениях." Foreground="{DynamicResource MutedBrush}" TextWrapping="Wrap" Margin="0,0,0,14"/>
+
+                <Border Style="{StaticResource Card}" Margin="0,0,0,10">
+                    <StackPanel>
+                        <CheckBox x:Name="PlankaCheck" Content="PLANKA" FontWeight="SemiBold"/>
+                        <StackPanel Margin="27,12,0,0">
+                            <TextBlock Text="Куда можно создавать задачи" Foreground="{DynamicResource MutedBrush}" FontSize="12" Margin="0,0,0,5"/>
+                            <ListBox x:Name="PlankaTargetsList" SelectionMode="Extended" DisplayMemberPath="DisplayName" Height="180" Background="{DynamicResource Surface2Brush}" BorderThickness="0" Foreground="{DynamicResource TextBrush}">
+                                <ListBox.ItemContainerStyle>
+                                    <Style TargetType="ListBoxItem">
+                                        <Setter Property="Foreground" Value="{DynamicResource TextBrush}"/>
+                                        <Setter Property="Background" Value="Transparent"/>
+                                        <Setter Property="Padding" Value="7,4"/>
+                                        <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                                        <Setter Property="Template">
+                                            <Setter.Value>
+                                                <ControlTemplate TargetType="ListBoxItem">
+                                                    <Border x:Name="ItemBorder" Background="{TemplateBinding Background}" CornerRadius="4" Padding="{TemplateBinding Padding}">
+                                                        <ContentPresenter TextElement.Foreground="{TemplateBinding Foreground}"/>
+                                                    </Border>
+                                                    <ControlTemplate.Triggers>
+                                                        <Trigger Property="IsMouseOver" Value="True">
+                                                            <Setter TargetName="ItemBorder" Property="Background" Value="{DynamicResource Surface3Brush}"/>
+                                                        </Trigger>
+                                                        <Trigger Property="IsSelected" Value="True">
+                                                            <Setter TargetName="ItemBorder" Property="Background" Value="{DynamicResource AccentBrush}"/>
+                                                            <Setter Property="Foreground" Value="White"/>
+                                                        </Trigger>
+                                                    </ControlTemplate.Triggers>
+                                                </ControlTemplate>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Style>
+                                </ListBox.ItemContainerStyle>
+                            </ListBox>
+                            <TextBlock Text="Можно выбрать всю доску — тогда ИИ сам выберет подходящий список внутри неё." Foreground="{DynamicResource MutedBrush}" FontSize="11" TextWrapping="Wrap" Margin="0,6,0,0"/>
+                            <TextBlock Text="Поиск резервного списка" Foreground="{DynamicResource MutedBrush}" FontSize="12" Margin="0,12,0,5"/>
+                            <TextBox x:Name="PlankaFallbackSearchBox" TextChanged="PlankaFallbackSearchBox_TextChanged" ToolTip="Введите часть названия проекта, доски или списка"/>
+                            <TextBlock Text="Резервный список (если ИИ не смог выбрать)" Foreground="{DynamicResource MutedBrush}" FontSize="12" Margin="0,10,0,5"/>
+                            <ComboBox x:Name="PlankaFallbackCombo" DisplayMemberPath="DisplayName" SelectionChanged="PlankaFallbackCombo_SelectionChanged"/>
+                            <TextBlock x:Name="PlankaStatusText" Foreground="{DynamicResource MutedBrush}" FontSize="11" TextWrapping="Wrap" Margin="0,9,0,0"/>
+                        </StackPanel>
+                    </StackPanel>
+                </Border>
+
+                <Border Style="{StaticResource Card}" Margin="0,0,0,10">
+                    <StackPanel>
+                        <CheckBox x:Name="GitHubCheck" Content="GitHub Issues" FontWeight="SemiBold"/>
+                        <TextBox x:Name="GitHubRepoBox" Margin="27,12,0,0" ToolTip="owner/repository"/>
+                    </StackPanel>
+                </Border>
+
+                <Border Style="{StaticResource Card}" Margin="0,0,0,10">
+                    <StackPanel>
+                        <CheckBox x:Name="ObsidianCheck" Content="Obsidian" FontWeight="SemiBold"/>
+                        <Grid Margin="27,12,0,0">
+                            <Grid.ColumnDefinitions><ColumnDefinition Width="150"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions><RowDefinition/><RowDefinition/><RowDefinition/></Grid.RowDefinitions>
+                            <TextBlock Text="Файл проекта" VerticalAlignment="Center"/><TextBox x:Name="ObsidianProjectBox" Grid.Column="1"/>
+                            <TextBlock Grid.Row="1" Text="Папка задач" VerticalAlignment="Center"/><TextBox x:Name="ObsidianFolderBox" Grid.Row="1" Grid.Column="1"/>
+                            <TextBlock Grid.Row="2" Text="Inbox" VerticalAlignment="Center"/><TextBox x:Name="ObsidianInboxBox" Grid.Row="2" Grid.Column="1"/>
+                        </Grid>
+                    </StackPanel>
+                </Border>
+
+                <Border Style="{StaticResource Card}">
+                    <CheckBox x:Name="WebhookCheck" Content="Webhook" FontWeight="SemiBold"/>
+                </Border>
+                <TextBlock x:Name="StatusText" Foreground="{DynamicResource MutedBrush}" TextWrapping="Wrap" Margin="4,12,4,0"/>
+            </StackPanel>
+        </ScrollViewer>
+        <Border Grid.Row="2" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="0,1,0,0" Padding="22,14">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right"><Button Content="Отмена" IsCancel="True"/><Button Style="{StaticResource AccentButton}" Content="Сохранить проект" Margin="8,0,0,0" Click="Save_Click"/></StackPanel>
+        </Border>
+    </Grid>
+</Window>

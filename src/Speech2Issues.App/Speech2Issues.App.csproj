@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <UseWindowsForms>true</UseWindowsForms>
+    <AssemblyName>Speech2Issues</AssemblyName>
+    <RootNamespace>Speech2Issues.App</RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Speech2Issues.Core\Speech2Issues.Core.csproj" />
+    <PackageReference Include="NAudio" Version="2.2.1" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Assets\Speech2Issues-icon.png" />
+    <Resource Include="Assets\Speech2Issues-icon-graphite.png" />
+    <Resource Include="Assets\Speech2Issues-icon-light.png" />
+    <Resource Include="Assets\Speech2Issues-icon-emerald.png" />
+    <Resource Include="Assets\Speech2Issues-icon-amber.png" />
+    <Resource Include="Assets\Speech2Issues-icon-astolfo-pink.png" />
+  </ItemGroup>
+</Project>
