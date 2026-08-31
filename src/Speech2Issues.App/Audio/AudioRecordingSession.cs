@@ -9,7 +9,7 @@ using Speech2Issues.Core.Storage;
 
 namespace Speech2Issues.App.Audio;
 
-public sealed record RecordedAudio(float[] Samples, string WavPath, TimeSpan Duration);
+public sealed record RecordedAudio(float[] Samples, string WavPath, TimeSpan Duration, string? CaptureWarning = null);
 
 public sealed class AudioRecordingSession : IDisposable
 {
@@ -27,6 +27,8 @@ public sealed class AudioRecordingSession : IDisposable
     private readonly TaskCompletionSource _playbackStopped = new(TaskCreationOptions.RunContinuationsAsynchronously);
     private long _microphoneFirstTick;
     private long _playbackFirstTick;
+    private Exception? _microphoneFailure;
+    private Exception? _playbackFailure;
     private bool _started;
     private bool _stopped;
 
@@ -53,6 +55,7 @@ public sealed class AudioRecordingSession : IDisposable
     }
 
     public event Action<float, float>? LevelsChanged;
+    public event Action<string>? CaptureWarning;
 
     public void Start()
     {
@@ -73,8 +76,8 @@ public sealed class AudioRecordingSession : IDisposable
             throw new InvalidOperationException("Recording is not active.");
         }
         _stopped = true;
-        _microphone.StopRecording();
-        _playback.StopRecording();
+        StopMicrophone();
+        StopPlayback();
         await Task.WhenAll(_microphoneStopped.Task, _playbackStopped.Task).WaitAsync(cancellationToken);
         _stopwatch.Stop();
         _microphoneWriter.Dispose();
@@ -86,10 +89,14 @@ public sealed class AudioRecordingSession : IDisposable
         var microphoneOffset = ToSamples(_microphoneFirstTick - firstTick);
         var playbackOffset = ToSamples(_playbackFirstTick - firstTick);
         var mixed = AudioMixer.Mix(microphone, playback, _settings.MicrophoneGain, _settings.PlaybackGain, microphoneOffset, playbackOffset);
+        if (mixed.Length == 0)
+        {
+            throw new InvalidOperationException("Аудиоустройства остановились до получения записи.");
+        }
         var outputPath = Path.Combine(_paths.RecordingsDirectory, $"recording-{DateTime.Now:yyyyMMdd-HHmmss}-{Guid.NewGuid():N}.wav");
         await File.WriteAllBytesAsync(outputPath, PcmWave.EncodeMono16(mixed), cancellationToken);
         TryDeleteCaptureDirectory();
-        return new(mixed, outputPath, TimeSpan.FromSeconds((double)mixed.Length / PcmWave.SampleRate));
+        return new(mixed, outputPath, TimeSpan.FromSeconds((double)mixed.Length / PcmWave.SampleRate), BuildCaptureWarning());
     }
 
     private void OnMicrophoneData(object? sender, WaveInEventArgs e)
@@ -108,15 +115,55 @@ public sealed class AudioRecordingSession : IDisposable
 
     private void OnMicrophoneStopped(object? sender, StoppedEventArgs e)
     {
-        if (e.Exception is null) _microphoneStopped.TrySetResult();
-        else _microphoneStopped.TrySetException(e.Exception);
+        if (e.Exception is not null && Interlocked.CompareExchange(ref _microphoneFailure, e.Exception, null) is null)
+        {
+            CaptureWarning?.Invoke(DescribeCaptureFailure("Микрофон", "звук компьютера", e.Exception));
+        }
+        _microphoneStopped.TrySetResult();
     }
 
     private void OnPlaybackStopped(object? sender, StoppedEventArgs e)
     {
-        if (e.Exception is null) _playbackStopped.TrySetResult();
-        else _playbackStopped.TrySetException(e.Exception);
+        if (e.Exception is not null && Interlocked.CompareExchange(ref _playbackFailure, e.Exception, null) is null)
+        {
+            CaptureWarning?.Invoke(DescribeCaptureFailure("Устройство вывода", "микрофон", e.Exception));
+        }
+        _playbackStopped.TrySetResult();
     }
+
+    private void StopMicrophone()
+    {
+        try { _microphone.StopRecording(); }
+        catch (Exception ex) { OnMicrophoneStopped(this, new StoppedEventArgs(ex)); }
+    }
+
+    private void StopPlayback()
+    {
+        try { _playback.StopRecording(); }
+        catch (Exception ex) { OnPlaybackStopped(this, new StoppedEventArgs(ex)); }
+    }
+
+    private string? BuildCaptureWarning()
+    {
+        if (_microphoneFailure is null && _playbackFailure is null)
+        {
+            return null;
+        }
+
+        if (_microphoneFailure is not null && _playbackFailure is not null)
+        {
+            return "Во время записи стали недоступны микрофон и устройство вывода. Сохранена доступная часть записи.";
+        }
+
+        return _microphoneFailure is not null
+            ? "Микрофон стал недоступен во время записи. Сохранен звук компьютера и доступная часть микрофона."
+            : "Устройство вывода изменилось во время записи. Сохранен микрофон и доступная часть звука компьютера.";
+    }
+
+    private static string DescribeCaptureFailure(string failedSource, string continuingSource, Exception exception) =>
+        unchecked((uint)exception.HResult) == 0x88890004
+            ? $"{failedSource} стало недоступно или изменилось. Запись {continuingSource} продолжается."
+            : $"Захват «{failedSource}» остановился. Запись {continuingSource} продолжается.";
 
     private static float[] ReadMono16K(string path)
     {

@@ -118,12 +118,19 @@ public partial class MainWindow : Window
             await _settingsStore.SaveSettingsAsync(_settings);
             _recording = new AudioRecordingSession(_paths, _settings.Audio);
             _recording.LevelsChanged += OnLevelsChanged;
+            _recording.CaptureWarning += OnCaptureWarning;
             _recording.Start();
             StatusText.Text = "Идёт запись микрофона и звука компьютера…";
             EnsureOverlay().ShowRecording();
             RecordingStateChanged?.Invoke(this, true);
         }
-        catch (Exception ex) { ShowError(ex); _recording?.Dispose(); _recording = null; }
+        catch (Exception ex)
+        {
+            ShowError(ex);
+            if (_recording is not null) _recording.CaptureWarning -= OnCaptureWarning;
+            _recording?.Dispose();
+            _recording = null;
+        }
         finally { UpdateRecordButton(); }
     }
 
@@ -132,6 +139,7 @@ public partial class MainWindow : Window
         var session = _recording!;
         _recording = null;
         session.LevelsChanged -= OnLevelsChanged;
+        session.CaptureWarning -= OnCaptureWarning;
         RecordingStateChanged?.Invoke(this, false);
         EnsureOverlay().ShowProcessing("Свожу микрофон и звук компьютера…");
         SetBusy(true, "Подготавливаю запись…");
@@ -167,6 +175,11 @@ public partial class MainWindow : Window
                     var target = ResolveTarget(binding, draft.Id);
                     await _history.UpsertDeliveryAsync(new DeliveryAttempt(draft.Id, binding.Id, binding.Kind, target.Id, target.Name, HistoryStatus.Pending, null, null));
                 }
+            }
+            if (!string.IsNullOrWhiteSpace(recorded.CaptureWarning))
+            {
+                StatusText.Text = recorded.CaptureWarning;
+                NotificationRequested?.Invoke(this, recorded.CaptureWarning);
             }
             BeginCountdown();
         }
@@ -590,6 +603,12 @@ public partial class MainWindow : Window
     private void LoadDevices() { _microphones = AudioDeviceService.GetMicrophones(); _playbackDevices = AudioDeviceService.GetPlaybackDevices(); }
     private WhisperTranscriber CreateWhisperTranscriber() => new(_paths.ModelsDirectory, _settings.SpeechRecognition, _paths.RuntimeDirectory);
     private void OnLevelsChanged(float microphone, float playback) => Dispatcher.BeginInvoke(() => _overlay?.UpdateAudioLevel(Math.Sqrt(Math.Max(Math.Max(0, microphone), Math.Max(0, playback)))));
+    private void OnCaptureWarning(string message) => Dispatcher.BeginInvoke(() =>
+    {
+        if (_recording is null) return;
+        StatusText.Text = message;
+        NotificationRequested?.Invoke(this, message);
+    });
     private void ShowError(Exception ex) { StatusText.Text = $"Ошибка: {ex.Message}"; EnsureOverlay().ShowError(ex.Message); NotificationRequested?.Invoke(this, StatusText.Text); }
     private static DestinationTarget ToDestinationTarget(PlankaTargetBinding x) => new(x.ListId, x.DisplayName, x.BoardId);
     private static bool IsRepository(string value) { var parts = value.Trim().Trim('/').Split('/'); return parts.Length == 2 && parts.All(x => !string.IsNullOrWhiteSpace(x)); }
